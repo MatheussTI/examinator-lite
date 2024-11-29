@@ -11,8 +11,7 @@ class DBConfig:
             "USER": None,
             "PASSWORD": None
         }
-        self.connection_string = f"mongodb://{
-            self.mongo_db_infos['HOST']}:{self.mongo_db_infos['PORT']}"
+        self.connection_string = f"mongodb://{self.mongo_db_infos['HOST']}:{self.mongo_db_infos['PORT']}"
         self.client = None
         self.db = None
         self.verify_connection()
@@ -27,18 +26,16 @@ class DBConfig:
             self.db.list_collection_names()
             print("Conexão bem-sucedida sem autenticação.")
         except errors.OperationFailure:
-            print(
-                "Falha na conexão sem autenticação. O MongoDB provavelmente exige autenticação.")
+            print("Falha na conexão sem autenticação. O MongoDB provavelmente exige autenticação.")
             self.ask_for_credentials()
 
     def ask_for_credentials(self):
         # Se a conexão sem autenticação falhar, pede as credenciais
         self.mongo_db_infos["USER"] = input("Digite o username: ").strip()
-        self.mongo_db_infos["PASSWORD"] = getpass.getpass(
-            "Digite a senha: ").strip()
+        self.mongo_db_infos["PASSWORD"] = getpass.getpass("Digite a senha: ").strip()
 
-        self.connection_string = f"mongodb://{self.mongo_db_infos['USER']}:{
-            self.mongo_db_infos['PASSWORD']}@{self.mongo_db_infos['HOST']}:{self.mongo_db_infos['PORT']}"
+        # Formata a string de conexão com as credenciais
+        self.connection_string = f"mongodb://{self.mongo_db_infos['USER']}:{self.mongo_db_infos['PASSWORD']}@{self.mongo_db_infos['HOST']}:{self.mongo_db_infos['PORT']}"
 
         try:
             # Tentando conectar com as credenciais fornecidas
@@ -49,10 +46,30 @@ class DBConfig:
             self.db.list_collection_names()
             print("Conexão bem-sucedida com autenticação.")
         except errors.OperationFailure:
-            print(
-                "Falha na autenticação. Certifique-se de que as credenciais estão corretas.")
+            print("Falha na autenticação. Certifique-se de que as credenciais estão corretas.")
         except Exception as e:
             print(f"Erro ao tentar conectar: {e}")
+
+    # Verifica se a coleção existe no banco de dados.
+    def verificar_colecao(self, nome_colecao):
+        if nome_colecao not in self.db.list_collection_names():
+            print(f"Coleção '{nome_colecao}' não encontrada.")
+            return False
+        print(f"Coleção '{nome_colecao}' já existe.")
+        return True
+
+    # Cria uma coleção no banco de dados.
+    def criar_colecao(self, nome_colecao):
+        print(f"Coleção '{nome_colecao}' não encontrada. Criando...")
+        self.db.create_collection(nome_colecao)
+        print(f"Coleção '{nome_colecao}' criada com sucesso!")
+
+    # Verifica se as coleções necessárias existem e cria se não existirem.
+    def criar_colecao_se_necessario(self):
+        colecoes_necessarias = ["medicos", "exames", "pacientes"]
+        for colecao in colecoes_necessarias:
+            if not self.verificar_colecao(colecao):
+                self.criar_colecao(colecao)
 
     def list_collections(self):
         try:
@@ -73,3 +90,9 @@ class DBConfig:
 # Criando e utilizando a classe
 db_config = DBConfig()
 db = db_config.get_db()
+
+# Exibindo as coleções no banco de dados
+db_config.list_collections()
+
+# Verificando e criando coleções necessárias
+db_config.criar_colecao_se_necessario()
