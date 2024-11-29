@@ -1,8 +1,3 @@
-from model.exame_model import Exame
-from model.paciente_model import Paciente
-from model.medico_model import Medico
-
-
 class ExameController:
     def __init__(self, db):
         self.db = db
@@ -130,3 +125,13 @@ class ExameController:
         except Exception as e:
             print(f"Erro ao contar exames: {e}")
             return 0
+
+    # Método para obter todos os exames
+    def get_exames(self):
+        """Retorna todos os exames armazenados"""
+        try:
+            exames = self.exame_collection.find()
+            return list(exames)
+        except Exception as e:
+            print(f"Erro ao buscar exames: {e}")
+            return []

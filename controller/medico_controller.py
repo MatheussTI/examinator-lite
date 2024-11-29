@@ -1,10 +1,8 @@
-from model.medico_model import Medico
-
-
 class MedicoController:
-    def __init__(self, db):
+    def __init__(self, db, exame_controller):
         self.db = db
         self.medico_collection = db["medicos"]
+        self.exame_controller = exame_controller  # Controlador de exames, já passado no construtor
         self.verificar_conexao()
 
     def verificar_conexao(self):
@@ -126,3 +124,64 @@ class MedicoController:
         except Exception as e:
             print(f"Erro ao contar médicos: {e}")
             return 0
+
+    def get_exames_por_medico(self):
+        """Contabiliza o número de exames realizados por cada médico, incluindo especialidade"""
+        medico_exames = {}
+
+        try:
+            # Obtém todos os exames através do exame_controller
+            exames = self.exame_controller.exame_collection.find()
+            for exame in exames:
+                # Verifica qual médico é responsável pelo exame
+                medico_responsavel = exame.get("medico_responsavel")
+                medico = self.buscar_medico_por_nome(medico_responsavel)
+                
+                if medico:
+                    nome_medico = medico.get("nome")
+                    especialidade = medico.get("especialidade")  # Supondo que cada médico tem uma especialidade
+
+                    # Se o médico já estiver no dicionário, apenas incrementa o contador
+                    if nome_medico in medico_exames:
+                        medico_exames[nome_medico]["numero_exames"] += 1
+                    else:
+                        # Se o médico não estiver no dicionário, cria uma entrada com o contador inicializado
+                        medico_exames[nome_medico] = {
+                            "numero_exames": 1,
+                            "especialidade": especialidade
+                        }
+            
+            # Retorna os dados organizados por médico
+            return medico_exames
+        except Exception as e:
+            print(f"Erro ao contar exames por médico: {e}")
+            return {}
+    def get_exames_por_especialidade(self):
+            """Contabiliza o número de exames realizados por especialidade de cada médico"""
+            especialidades_exames = {}
+
+            try:
+                # Obtém todos os exames
+                exames = self.exame_controller.exame_collection.find()
+                for exame in exames:
+                    medico_responsavel = exame.get("medico_responsavel")
+                    medico = self.buscar_medico_por_nome(medico_responsavel)
+
+                    if medico:
+                        especialidade = medico.get("especialidade")  # Supondo que cada médico tem uma especialidade
+
+                        # Se a especialidade já estiver no dicionário, apenas incrementa o contador
+                        if especialidade in especialidades_exames:
+                            especialidades_exames[especialidade]["numero_exames"] += 1
+                        else:
+                            # Se a especialidade não estiver no dicionário, cria uma entrada com o contador inicializado
+                            especialidades_exames[especialidade] = {
+                                "numero_exames": 1
+                            }
+
+                # Retorna os dados organizados por especialidade
+                return especialidades_exames
+
+            except Exception as e:
+                print(f"Erro ao contar exames por especialidade: {e}")
+                return {}
