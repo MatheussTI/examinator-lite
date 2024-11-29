@@ -1,18 +1,19 @@
-from pymongo import MongoClient
+class Exame:
+    def __init__(self, nome_exame: str = None, medico_responsavel: str = None):
+        self.set_nome_exame(nome_exame)
+        self.set_medico_responsavel(medico_responsavel)
 
-class ExameModel:
-    def __init__(self, db):
-        self.collection = db["exames"]
+    def set_nome_exame(self, nome_exame: str):
+        self.nome_exame = nome_exame
 
-    def inserir_exame(self, nome_exame, medico_responsavel):
-        exame = {
-            "nome_exame": nome_exame,
-            "medico_responsavel": medico_responsavel
-        }
-        self.collection.insert_one(exame)
-        print(f"Exame {nome_exame} inserido com sucesso!")
+    def set_medico_responsavel(self, medico_responsavel: str):
+        self.medico_responsavel = medico_responsavel
 
-    def listar_exames(self):
-        exames = self.collection.find()
-        for exame in exames:
-            print(exame)
+    def get_nome_exame(self) -> str:
+        return self.nome_exame
+
+    def get_medico_responsavel(self) -> str:
+        return self.medico_responsavel
+
+    def to_string(self) -> str:
+        return f"Exame: {self.get_nome_exame()} | Médico Responsável: {self.get_medico_responsavel()}"
