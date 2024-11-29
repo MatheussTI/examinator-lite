@@ -86,7 +86,14 @@ class DBConfig:
     def get_db(self):
         return self.db
 
+    def query_count(self, collection_name):
+        # Retorna o número de documentos de uma coleção
+        collection = self.db[collection_name]
+        count = collection.count_documents({})
+        return count
+    
 
+########## TESTE DOS MÉTODOS IMPLEMENTADOS ##############
 # Criando e utilizando a classe
 db_config = DBConfig()
 db = db_config.get_db()
