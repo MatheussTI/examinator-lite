@@ -1,3 +1,5 @@
+from model.medico_model import Medico
+
 class MedicoController:
     def __init__(self, db, exame_controller):
         self.db = db

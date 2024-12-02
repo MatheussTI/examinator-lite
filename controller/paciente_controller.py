@@ -1,6 +1,5 @@
 from model.paciente_model import Paciente
 
-
 class PacienteController:
     def __init__(self, db):
         self.db = db

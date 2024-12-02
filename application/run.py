@@ -28,3 +28,4 @@ if __name__ == "__main__":
 
     # Inicia o menu principal
     interface_usuario.menu_principal()
+ 

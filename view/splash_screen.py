@@ -17,8 +17,8 @@ class SplashScreen:
     def get_documents_count(self, collection_name):
         # Retorna o total de registros computado pela query
         count_data = self.db_config.query_count(collection_name)
-        return count_data  # Não é necessário acessar um índice, apenas retorna o valor inteiro
-
+        return count_data 
+    
     def get_updated_screen(self):
         # Exibe a tela inicial com a contagem de documentos
         return f"""

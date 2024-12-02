@@ -1,5 +1,6 @@
 import csv
 
+
 class InterfaceUsuario:
     def __init__(self, exame_controller, paciente_controller, medico_controller, splash_screen):
         self.exame_controller = exame_controller
@@ -8,12 +9,24 @@ class InterfaceUsuario:
         self.splash_screen = splash_screen
 
     def mostrar_contagem_registros(self):
+        """Exibe a contagem de registros de exames, pacientes e médicos."""
         print("\n-------------------- Listagem Geral --------------------")
         print(f"TOTAL DE REGISTROS: ")
         print(f"1. Exames:     {str(self.splash_screen.get_documents_count('exames')).rjust(6)}")
         print(f"2. Pacientes:  {str(self.splash_screen.get_documents_count('pacientes')).rjust(5)}")
         print(f"3. Médicos:    {str(self.splash_screen.get_documents_count('medicos')).rjust(5)}")
         print("--------------------------------------------------------")
+
+    def confirmar_acao(self, acao):
+
+        while True:
+            confirmacao = input(f"Tem certeza de que deseja {acao}? (sim/não): ").strip().lower()
+            if confirmacao in ['sim', 's']:
+                return True
+            elif confirmacao in ['não', 'nao', 'n']:
+                return False
+            else:
+                print("Resposta inválida. Digite 'sim' ou 'não'.")
 
     def menu_principal(self):
         """Menu principal do sistema"""
@@ -33,10 +46,10 @@ class InterfaceUsuario:
             elif opcao == '3':
                 self.menu_medicos()
             elif opcao == '4':
-                self.menu_relatorios()  # Chamando o menu de relatórios
+                self.menu_relatorios()  
             elif opcao == '5':
                 print("Saindo do sistema...")
-                self.splash_screen.get_updated_screen()  # Exibe o SplashScreen antes de sair
+                self.splash_screen.get_updated_screen()  
                 break
             else:
                 print("Opção inválida! Tente novamente.")
@@ -53,14 +66,17 @@ class InterfaceUsuario:
             opcao = input("Escolha uma opção: ")
 
             if opcao == '1':
-                self.exame_controller.inserir_exame()
-                self.mostrar_contagem_registros()
+                if self.confirmar_acao("inserir um exame"):
+                    self.exame_controller.inserir_exame()
+                    self.mostrar_contagem_registros()
             elif opcao == '2':
-                self.exame_controller.remover_exame()
-                self.mostrar_contagem_registros()
+                if self.confirmar_acao("remover um exame"):
+                    self.exame_controller.remover_exame()
+                    self.mostrar_contagem_registros()
             elif opcao == '3':
-                self.exame_controller.atualizar_exame()
-                self.mostrar_contagem_registros()
+                if self.confirmar_acao("atualizar um exame"):
+                    self.exame_controller.atualizar_exame()
+                    self.mostrar_contagem_registros()
             elif opcao == '4':
                 self.exame_controller.listar_exames_detalhados()
             elif opcao == '5':
@@ -80,14 +96,17 @@ class InterfaceUsuario:
             opcao = input("Escolha uma opção: ")
 
             if opcao == '1':
-                self.paciente_controller.inserir_paciente()
-                self.mostrar_contagem_registros()
+                if self.confirmar_acao("inserir um paciente"):
+                    self.paciente_controller.inserir_paciente()
+                    self.mostrar_contagem_registros()
             elif opcao == '2':
-                self.paciente_controller.remover_paciente()
-                self.mostrar_contagem_registros()
+                if self.confirmar_acao("remover um paciente"):
+                    self.paciente_controller.remover_paciente()
+                    self.mostrar_contagem_registros()
             elif opcao == '3':
-                self.paciente_controller.atualizar_paciente()
-                self.mostrar_contagem_registros()
+                if self.confirmar_acao("atualizar um paciente"):
+                    self.paciente_controller.atualizar_paciente()
+                    self.mostrar_contagem_registros()
             elif opcao == '4':
                 self.paciente_controller.listar_pacientes_detalhados()
             elif opcao == '5':
@@ -107,14 +126,17 @@ class InterfaceUsuario:
             opcao = input("Escolha uma opção: ")
 
             if opcao == '1':
-                self.medico_controller.inserir_medico()
-                self.mostrar_contagem_registros()
+                if self.confirmar_acao("inserir um médico"):
+                    self.medico_controller.inserir_medico()
+                    self.mostrar_contagem_registros()
             elif opcao == '2':
-                self.medico_controller.remover_medico()
-                self.mostrar_contagem_registros()
+                if self.confirmar_acao("remover um médico"):
+                    self.medico_controller.remover_medico()
+                    self.mostrar_contagem_registros()
             elif opcao == '3':
-                self.medico_controller.atualizar_medico()
-                self.mostrar_contagem_registros()
+                if self.confirmar_acao("atualizar um médico"):
+                    self.medico_controller.atualizar_medico()
+                    self.mostrar_contagem_registros()
             elif opcao == '4':
                 self.medico_controller.listar_medicos_detalhados()
             elif opcao == '5':
@@ -134,7 +156,7 @@ class InterfaceUsuario:
             if opcao == '1':
                 self.exibir_relatorios()
             elif opcao == '2':
-                self.exportar_relatorio()  # Chamando a função de exportação
+                self.exportar_relatorio() 
             elif opcao == '3':
                 break
             else:
@@ -148,9 +170,9 @@ class InterfaceUsuario:
         opcao = input("Escolha uma opção: ")
 
         if opcao == '1':
-            self.relatorio_sumarizacao()  # Chama o método de sumarização
+            self.relatorio_sumarizacao()  
         elif opcao == '2':
-            self.relatorio_juncao()  # Chama o método de junção de coleções
+            self.relatorio_juncao() 
         else:
             print("Opção inválida! Tente novamente.")
 
@@ -170,13 +192,13 @@ class InterfaceUsuario:
         """Exporta relatório de médicos, exames e especialidades para CSV"""
         medicos = self.medico_controller.get_exames_por_medico()
 
-        # Abre o arquivo CSV para escrita
+      
         with open('relatorio_medicos.csv', mode='w', newline='') as file:
             writer = csv.writer(file)
-            # Cabeçalho do CSV
+    
             writer.writerow(['Nome', 'Total de Exames', 'Especialidade'])
 
-            # Adiciona os dados de cada médico
+          
             for medico, dados in medicos.items():
                 writer.writerow([medico, dados['numero_exames'], dados['especialidade']])
 

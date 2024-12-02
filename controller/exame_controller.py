@@ -1,3 +1,5 @@
+from model.exame_model import Exame
+
 class ExameController:
     def __init__(self, db):
         self.db = db
