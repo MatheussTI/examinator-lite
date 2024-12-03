@@ -12,4 +12,4 @@ python3 -m application.run
 ```
 3. Aplicação iniciada.
 
-Além dos passos mencionados acima, segue o [vídeo](https://www.youtube.com) de explicação da interface da aplicação.
+Além dos passos mencionados acima, segue o [vídeo](https://youtu.be/7qhZRLuQgdg) de explicação da interface da aplicação.
