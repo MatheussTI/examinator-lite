@@ -1,13 +1,18 @@
 from pymongo import MongoClient, errors
+import getpass  # Para esconder a senha ao solicitar no terminal
+
 
 class DBConfig:
     def __init__(self):
         self.mongo_db_infos = {
-            "DB_NAME": "Cluster0",
-            "USER": "normal",
-            "PASSWORD": "normal"
+            "HOST": "localhost",
+            "PORT": "27017",
+            "DB_NAME": "ExaminatorLite",
+            "USER": None,
+            "PASSWORD": None
         }
-        self.connection_string = f"mongodb+srv://{self.mongo_db_infos['USER']}:{self.mongo_db_infos['PASSWORD']}@cluster0.aub74.mongodb.net/?retryWrites=true&w=majority&appName={self.mongo_db_infos['DB_NAME']}"
+        self.connection_string = f"mongodb://{
+            self.mongo_db_infos['HOST']}:{self.mongo_db_infos['PORT']}"
         self.client = None
         self.db = None
         self.verify_connection()
@@ -15,15 +20,40 @@ class DBConfig:
     def verify_connection(self):
         # Primeiro tenta uma conexão sem autenticação
         try:
-            print("Tentando conectar com o banco em nuvem...")
+            print("Tentando conectar sem autenticação...")
             self.client = MongoClient(self.connection_string)
             self.db = self.client[self.mongo_db_infos["DB_NAME"]]
             # Tentando listar as coleções para garantir que a conexão seja válida
             self.db.list_collection_names()
-            print("Conexão bem-sucedida.")
+            print("Conexão bem-sucedida sem autenticação.")
         except errors.OperationFailure:
-            print("Falha na conexão")
+            print(
+                "Falha na conexão sem autenticação. O MongoDB provavelmente exige autenticação.")
             self.ask_for_credentials()
+
+    def ask_for_credentials(self):
+        # Se a conexão sem autenticação falhar, pede as credenciais
+        self.mongo_db_infos["USER"] = input("Digite o username: ").strip()
+        self.mongo_db_infos["PASSWORD"] = getpass.getpass(
+            "Digite a senha: ").strip()
+
+        # Formata a string de conexão com as credenciais
+        self.connection_string = f"mongodb://{self.mongo_db_infos['USER']}:{
+            self.mongo_db_infos['PASSWORD']}@{self.mongo_db_infos['HOST']}:{self.mongo_db_infos['PORT']}"
+
+        try:
+            # Tentando conectar com as credenciais fornecidas
+            print("Tentando conectar com autenticação...")
+            self.client = MongoClient(self.connection_string)
+            self.db = self.client[self.mongo_db_infos["DB_NAME"]]
+            # Tentando listar as coleções para garantir que a conexão seja válida
+            self.db.list_collection_names()
+            print("Conexão bem-sucedida com autenticação.")
+        except errors.OperationFailure:
+            print(
+                "Falha na autenticação. Certifique-se de que as credenciais estão corretas.")
+        except Exception as e:
+            print(f"Erro ao tentar conectar: {e}")
 
     # Verifica se a coleção existe no banco de dados.
     def verificar_colecao(self, nome_colecao):
@@ -66,7 +96,7 @@ class DBConfig:
         collection = self.db[collection_name]
         count = collection.count_documents({})
         return count
-    
+
 
 ########## TESTE DOS MÉTODOS IMPLEMENTADOS ##############
 # Criando e utilizando a classe

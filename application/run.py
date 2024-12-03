@@ -19,13 +19,14 @@ if __name__ == "__main__":
     # Criação dos controladores, passando a conexão com o banco de dados
     exame_controller = ExameController(db)  # Passa db para o controlador
     paciente_controller = PacienteController(db)  # Passa db para o controlador
-    
+
     # Passa db e exame_controller ao criar o MedicoController
-    medico_controller = MedicoController(db, exame_controller)  # Passa db e exame_controller para o controlador
+    # Passa db e exame_controller para o controlador
+    medico_controller = MedicoController(db, exame_controller)
 
     # Instância a Interface do Usuário com os controladores e o SplashScreen
-    interface_usuario = InterfaceUsuario(exame_controller, paciente_controller, medico_controller, splash_screen)
+    interface_usuario = InterfaceUsuario(
+        exame_controller, paciente_controller, medico_controller, splash_screen)
 
     # Inicia o menu principal
     interface_usuario.menu_principal()
- 
